@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+</head>
+<body ng-app="app" ng-controller="ctrl">
+
+<div class="container">
+
+<p ng-if="msg" class="alert alert-success"> {{msg}} </p>
+
+<form>
+	<div class="form-group">
+		<input type="text" name="" class="form-control data" ng-model="data.nama">
+	</div>
+	<div class="form-group">
+		<input type="button" value="add" ng-click="addKota()" class="btn btn-default">
+	</div>
+</form>
+
+
+
+	
+	<table class="table table-bordered">
+		<tr>
+			<th>ID</th>
+			<th>Nama Kota</th>
+			<th>Status</th>
+		</tr>
+		<tr ng-repeat="val in kota">
+			<td>  {{ val.id }} </td>
+			<td>  {{ val.nama }} </td>
+			<td> 	
+				<button ng-click="editkota(val.id)" class="btn btn-default">Edit</button>
+				<button ng-click="deletekota(val.id)" class="btn btn-default">Delete</button>
+
+			</td>
+		</tr>
+	</table>
+
+	
+</div>
+
+
+</body>
+<script type="text/javascript" src="assets/js/angular.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery-3.2.1.js"></script>
+
+<script>
+
+
+	
+	// var myApp = angular.module('');
+
+	var app = angular.module('app',[]);
+
+	
+
+	app.controller('ctrl',function ($scope,$http){
+
+	$scope.data = {};
+
+		$http({
+		  method: 'GET',
+		  url: 'http://localhost/php-angular/select.php'
+			}).then(function successCallback(data) {
+		    	
+		    	$scope.kota = data.data;
+
+		    	console.log(data);
+
+
+		  	}, function errorCallback(response) {
+
+		  	});
+
+
+
+
+
+
+	$scope.addKota = function () {
+
+	$http({
+    method: 'POST',
+    url: 'http://localhost/php-angular/insert.php',
+    data: $scope.data ,
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+	}).then(function successCallback(data) {
+		    	
+		    	$scope.msg ="Berhasil Add Kota";
+		    	selectkota();
+		    	$scope.data.nama = ''
+
+		  	}, function errorCallback(response) {
+
+		  	});
+
+
+	},
+
+
+	selectkota = function() {
+
+		$http({
+		  method: 'GET',
+		  url: 'http://localhost/php-angular/select.php'
+			}).then(function successCallback(data) {
+		    	
+		    	$scope.kota = data.data;
+
+		  	}, function errorCallback(response) {
+
+		  	});
+
+
+	} 
+
+
+
+	$scope.deletekota = function (id) {
+		$http({
+		  method: 'POST',
+		  url: 'http://localhost/php-angular/delete.php?id='+id
+			}).then(function successCallback(data) {
+		    	
+		    	
+				$scope.msg ="Berhasil Di Hapus";
+				selectkota();
+
+		  	}, function errorCallback(response) {
+
+		  	});
+		
+	}
+
+
+	});
+
+</script>
+</html>
